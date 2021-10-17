@@ -53,7 +53,12 @@ impl Processor {
             sent: Vec::new(),
         };
 
-        mail_account.serialize(&mut &mut account.data.borrow_mut()[..])?;
+        let data_length = DataLength {
+            length: u32::try_from(get_instance_packed_len(&mail_account)?).unwrap(),
+        };
+        let offset: usize = 4;
+        data_length.serialize(&mut &mut account.data.borrow_mut()[..offset])?;
+        mail_account.serialize(&mut &mut account.data.borrow_mut()[offset..])?;
         Ok(())
     }
 
